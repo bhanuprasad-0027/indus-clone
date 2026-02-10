@@ -1,186 +1,140 @@
-// ========== MOBILE MENU ==========
+// === HAMBURGER MENU ===
 const hamburger = document.getElementById('hamburger');
 const navLinks = document.getElementById('navLinks');
-
-hamburger.addEventListener('click', () => {
-  hamburger.classList.toggle('active');
-  navLinks.classList.toggle('active');
-});
-
-// Close menu on link click
-navLinks.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    hamburger.classList.remove('active');
-    navLinks.classList.remove('active');
+if (hamburger && navLinks) {
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
+    hamburger.classList.toggle('open');
   });
-});
+}
 
-// ========== HERO SLIDER ==========
+// === HERO SLIDER ===
 const slides = document.querySelectorAll('.hero-slide');
-const dots = document.querySelectorAll('.hero-dots .dot');
+const slideImgs = document.querySelectorAll('.hero-slide-img');
+const dots = document.querySelectorAll('.dot');
 let currentSlide = 0;
 let slideInterval;
 
-function showSlide(index) {
+function goToSlide(index) {
   slides.forEach(s => s.classList.remove('active'));
+  slideImgs.forEach(s => s.classList.remove('active'));
   dots.forEach(d => d.classList.remove('active'));
-  slides[index].classList.add('active');
-  dots[index].classList.add('active');
+  if (slides[index]) slides[index].classList.add('active');
+  if (slideImgs[index]) slideImgs[index].classList.add('active');
+  if (dots[index]) dots[index].classList.add('active');
   currentSlide = index;
 }
 
 function nextSlide() {
   const next = (currentSlide + 1) % slides.length;
-  showSlide(next);
+  goToSlide(next);
 }
 
-function startSlider() {
+if (slides.length > 0) {
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      goToSlide(parseInt(dot.dataset.slide));
+      clearInterval(slideInterval);
+      slideInterval = setInterval(nextSlide, 5000);
+    });
+  });
   slideInterval = setInterval(nextSlide, 5000);
 }
 
-dots.forEach((dot, i) => {
-  dot.addEventListener('click', () => {
-    clearInterval(slideInterval);
-    showSlide(i);
-    startSlider();
-  });
-});
-
-startSlider();
-
-// ========== TECHNOLOGY TABS ==========
+// === TECHNOLOGY TABS ===
 const techTabs = document.querySelectorAll('.tech-tab');
 const techPanels = document.querySelectorAll('.tech-panel');
-
 techTabs.forEach(tab => {
   tab.addEventListener('click', () => {
-    const target = tab.dataset.tab;
-    
     techTabs.forEach(t => t.classList.remove('active'));
     techPanels.forEach(p => p.classList.remove('active'));
-    
     tab.classList.add('active');
-    document.getElementById(target).classList.add('active');
+    const panel = document.getElementById(tab.dataset.tab);
+    if (panel) panel.classList.add('active');
   });
 });
 
-// ========== PRICING TOGGLE ==========
+// === PRICING TOGGLE ===
 const pricingBtns = document.querySelectorAll('.pricing-toggle button');
 const pricingPanels = document.querySelectorAll('.pricing-panel');
-
 pricingBtns.forEach(btn => {
   btn.addEventListener('click', () => {
-    const target = btn.dataset.plan;
-    
     pricingBtns.forEach(b => b.classList.remove('active'));
     pricingPanels.forEach(p => p.classList.remove('active'));
-    
     btn.classList.add('active');
-    document.getElementById(target).classList.add('active');
+    const panel = document.getElementById(btn.dataset.plan);
+    if (panel) panel.classList.add('active');
   });
 });
 
-// ========== CONTACT MODAL ==========
-const modalOverlay = document.getElementById('contactModal');
+// === CONTACT MODAL ===
+const modal = document.getElementById('contactModal');
+const closeModal = document.getElementById('closeModal');
 const openModalBtns = document.querySelectorAll('[data-open-modal]');
-const closeModalBtn = document.getElementById('closeModal');
 
 openModalBtns.forEach(btn => {
   btn.addEventListener('click', (e) => {
     e.preventDefault();
-    modalOverlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    if (modal) modal.classList.add('active');
   });
 });
 
-closeModalBtn.addEventListener('click', () => {
-  modalOverlay.classList.remove('active');
-  document.body.style.overflow = '';
-});
+if (closeModal) {
+  closeModal.addEventListener('click', () => modal.classList.remove('active'));
+}
 
-modalOverlay.addEventListener('click', (e) => {
-  if (e.target === modalOverlay) {
-    modalOverlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-});
+if (modal) {
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.classList.remove('active');
+  });
+}
 
-// ========== BACK TO TOP ==========
+// === BACK TO TOP ===
 const backToTop = document.getElementById('backToTop');
-
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 400) {
-    backToTop.classList.add('visible');
-  } else {
-    backToTop.classList.remove('visible');
-  }
-});
-
-backToTop.addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
-// ========== NAVBAR ACTIVE STATE ON SCROLL ==========
-const sections = document.querySelectorAll('section[id]');
-const navItems = document.querySelectorAll('.nav-links a[href^="#"]');
-
-window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(section => {
-    const sectionTop = section.offsetTop - 120;
-    if (window.scrollY >= sectionTop) {
-      current = section.getAttribute('id');
+if (backToTop) {
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) {
+      backToTop.classList.add('visible');
+    } else {
+      backToTop.classList.remove('visible');
     }
   });
-  
-  navItems.forEach(item => {
-    item.classList.remove('active');
-    if (item.getAttribute('href') === '#' + current) {
-      item.classList.add('active');
-    }
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
-});
+}
 
-// ========== CONTACT FORM SUBMIT ==========
+// === NEWSLETTER FORM ===
+const newsletterForm = document.getElementById('newsletterForm');
+if (newsletterForm) {
+  newsletterForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert('Thank you for subscribing!');
+    newsletterForm.reset();
+  });
+}
+
+// === CONTACT FORM ===
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
   contactForm.addEventListener('submit', (e) => {
     e.preventDefault();
     alert('Thank you for your message! We will get back to you soon.');
     contactForm.reset();
-    modalOverlay.classList.remove('active');
-    document.body.style.overflow = '';
+    if (modal) modal.classList.remove('active');
   });
 }
 
-// ========== NEWSLETTER FORM ==========
-const newsletterForm = document.getElementById('newsletterForm');
-if (newsletterForm) {
-  newsletterForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    alert('Thank you for subscribing to our newsletter!');
-    newsletterForm.reset();
-  });
-}
-
-// ========== SCROLL ANIMATIONS ==========
-const observerOptions = {
-  threshold: 0.1,
-  rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
+// === SMOOTH SCROLL for anchor links ===
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    const targetId = this.getAttribute('href');
+    if (targetId === '#') return;
+    const target = document.querySelector(targetId);
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (navLinks) navLinks.classList.remove('active');
     }
   });
-}, observerOptions);
-
-document.querySelectorAll('.service-card, .cs-card, .team-card, .pricing-card, .about-content, .about-image').forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(30px)';
-  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-  observer.observe(el);
 });
